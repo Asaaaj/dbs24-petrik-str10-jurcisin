@@ -1,6 +1,5 @@
 import psycopg2
 from dbs_assignment_jurcisin.config import settings
-import json
 from fastapi import APIRouter
 router = APIRouter()
 
@@ -19,4 +18,4 @@ async def version():
     result = cursor.fetchone()[0]
     cursor.close()
     connection.close()
-    return json.dumps({"version": result})
+    return {"version": result}
