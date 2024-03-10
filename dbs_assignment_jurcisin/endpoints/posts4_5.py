@@ -16,7 +16,7 @@ async def get_posts(limit: int = Query(None), query: str = Query(None), duration
     if query is not None:
         cursor = connection.cursor()
         cursor.execute("""
-            SELECT p.id, p.creationdate, p.viewcount, p.lasteditdate, p.title, p.body, p.answercount, p.closeddate,
+            SELECT p.id, p.creationdate, p.viewcount, p.lasteditdate, p.title, p.body, p.answercount, p.closeddate, p.lastactivitydate
             (SELECT STRING_AGG(t.tagname, ', ') 
             FROM post_tags AS pt 
             JOIN tags AS t ON pt.tag_id = t.id 
@@ -36,11 +36,12 @@ async def get_posts(limit: int = Query(None), query: str = Query(None), duration
             "creationdate": row[1],
             "viewcount": row[2],
             "lasteditdate": row[3],
+            "lastactivitydate": row[8],
             "title": row[4],
             "body": row[5],
             "answercount": row[6],
             "closeddate": row[7],
-            "tags": row[8]
+            "tags": row[9]
             }
             items.append(item)
         return {"items": items}
