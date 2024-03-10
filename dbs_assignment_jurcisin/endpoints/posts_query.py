@@ -21,11 +21,26 @@ async def posts_limit(limit: int, query: str):
             JOIN tags AS t ON pt.tag_id = t.id 
             WHERE pt.post_id = p.id) AS tags
         FROM posts AS p
-        WHERE p.title ILIKE '%{query}%' OR p.body ILIKE '%{query}%' 
+        WHERE p.title ILIKE %s OR p.body ILIKE %s 
         ORDER BY p.creationdate DESC
-        LIMIT {limit};
-    """)
+        LIMIT %s;
+    """, ('%' + query + '%', '%' + query + '%', limit,))
     db_data = cursor.fetchall()
     cursor.close()
     connection.close()
-    return {"items": db_data}
+    items = []
+    for row in db_data:
+        item = {
+            "id": row[0],
+            "creationdate": row[1],
+            "viewcount": row[2],
+            "lasteditdate": row[3],
+            "title": row[4],
+            "body": row[5],
+            "answercount": row[6],
+            "closeddate": row[7],
+            "tags": row[8]
+        }
+        items.append(item)
+    
+    return {"items": items}

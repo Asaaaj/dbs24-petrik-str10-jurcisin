@@ -18,11 +18,25 @@ async def posts_duration(duration: int, limit: int):
         SELECT p.id, p.creationdate, p.viewcount, p.lasteditdate, p.lastactivitydate, p.title, p.closeddate,
             ROUND(EXTRACT(EPOCH FROM (p.closeddate - p.creationdate)) / 60.0, 2) AS duration
         FROM posts AS p
-        WHERE ROUND(EXTRACT(EPOCH FROM (p.closeddate - p.creationdate)) / 60.0, 2) < {duration}
+        WHERE ROUND(EXTRACT(EPOCH FROM (p.closeddate - p.creationdate)) / 60.0, 2) < %s
         ORDER BY p.closeddate DESC
-        LIMIT {limit};
-    """)
+        LIMIT %s;
+    """, (duration, limit,))
     db_data = cursor.fetchall()
     cursor.close()
     connection.close()
-    return {"items": db_data}
+    items = []
+    for row in db_data:
+        item = {
+        "id": row[0],
+        "creationdate": row[1],
+        "viewcount": row[2],
+        "lasteditdate": row[3],
+        "lastactivitydate": row[4],
+        "title": row[5],
+        "closeddate": row[6],
+        "duration": row[7]
+        }
+        items.append(item)
+
+    return {"items": items}

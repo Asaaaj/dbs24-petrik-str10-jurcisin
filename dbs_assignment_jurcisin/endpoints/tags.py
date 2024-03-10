@@ -38,30 +38,30 @@ async def tags(tag_name: str):
             SELECT 
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 1) AS monday_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 1 AND p.id IN 
-                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = '{tag_name}')) AS monday_tag_count,
+                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = %s)) AS monday_tag_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 2) AS tuesday_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 2 AND p.id IN 
-                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = '{tag_name}')) AS tuesday_tag_count,
+                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = %s)) AS tuesday_tag_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 3) AS wednesday_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 3 AND p.id IN 
-                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = '{tag_name}')) AS wednesday_tag_count,
+                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = %s)) AS wednesday_tag_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 4) AS thursday_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 4 AND p.id IN 
-                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = '{tag_name}')) AS thursday_tag_count,
+                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = %s)) AS thursday_tag_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 5) AS friday_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 5 AND p.id IN 
-                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = '{tag_name}')) AS friday_tag_count,
+                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = %s)) AS friday_tag_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 6) AS saturday_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 6 AND p.id IN 
-                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = '{tag_name}')) AS saturday_tag_count,
+                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = %s)) AS saturday_tag_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 0) AS sunday_count,
                 (SELECT COUNT(*) FROM posts AS p WHERE EXTRACT(DOW FROM p.creationdate) = 0 AND p.id IN 
-                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = '{tag_name}')) AS sunday_tag_count
+                    (SELECT pt.post_id FROM tags AS t JOIN post_tags AS pt ON t.id = pt.tag_id WHERE t.tagname = %s)) AS sunday_tag_count
         ) AS days_counts
     ) AS sql_result;
-    """)
+    """, (tag_name, tag_name, tag_name, tag_name, tag_name, tag_name, tag_name,))
 
     db_data = cursor.fetchall()
     cursor.close()
     connection.close()
-    return {db_data}
+    return {"result": db_data[0][0]}
