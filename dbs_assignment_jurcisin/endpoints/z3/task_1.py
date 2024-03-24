@@ -16,7 +16,7 @@ async def posts(user_id: int):
     cursor = connection.cursor()
 
     cursor.execute("""
-        SELECT id, title, type, date, ROW_NUMBER() OVER (PARTITION BY type ORDER by date) AS position
+        SELECT id, title, type, date AS created_at, ROW_NUMBER() OVER (PARTITION BY type ORDER by date) AS position
         FROM (
             SELECT id, title, type, date,
                 LEAD(type) OVER (ORDER BY date) AS next_type,
@@ -45,7 +45,7 @@ async def posts(user_id: int):
             "id": row[0],
             "title": row[1],
             "type": row[2],
-            "date": row[3],
+            "created_at": row[3],
             "position": row[4]
         }
         items.append(item)
